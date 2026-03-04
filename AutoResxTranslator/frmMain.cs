@@ -577,7 +577,26 @@ namespace AutoResxTranslator
 			txtDeepLTranslationKey.Text = Properties.Settings.Default.DeepLTranslatorKey;
 			cmbDeeplApiType.SelectedIndex = Properties.Settings.Default.DeepLTranslatorType;
 			tabMain.TabPages.Remove(tabBrowser);
-		}
+            if (ParseSize(Properties.Settings.Default.MainForm_Size, out var formSize))
+                Size = formSize;
+        }
+
+        private static bool ParseSize(string text, out Size size)
+        {
+            var parts = (text ?? string.Empty)
+                .Split(',')
+                .Select(x => x.Trim())
+                .ToArray();
+
+			if (parts.Length == 2 && int.TryParse(parts[0], out var width) && int.TryParse(parts[1], out var height))
+			{
+				size = new Size(width, height);
+                return true;
+            }
+
+            size = Size.Empty;
+			return false;
+        }
 
 		private async void btnTranslate_ClickAsync(object sender, EventArgs e)
 		{
@@ -892,7 +911,8 @@ namespace AutoResxTranslator
 				Properties.Settings.Default.MicrosoftTranslatorRegion = txtMsTranslationRegion.Text;
 				Properties.Settings.Default.DeepLTranslatorKey = txtDeepLTranslationKey.Text;
 				Properties.Settings.Default.DeepLTranslatorType = (short)cmbDeeplApiType.SelectedIndex;
-				Properties.Settings.Default.Save();
+                Properties.Settings.Default.MainForm_Size = $"{Size.Width},{Size.Height}";
+                Properties.Settings.Default.Save();
 				_translateSettingsChanged = false;
 			}
 			_translateSettingsChanged = s.SelectedTab.Name == "tabTranslateServices";

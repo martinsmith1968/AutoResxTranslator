@@ -14,5 +14,8 @@
     <Setting Name="DeepLTranslatorType" Type="System.Int16" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="MainForm_Size" Type="System.String" Scope="User">
+      <Value Profile="(Default)">720, 457</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
