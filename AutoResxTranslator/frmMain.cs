@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,10 +10,10 @@ using System.Windows.Forms;
 using System.Xml;
 using AutoResxTranslator.Definitions;
 
-/* 
+/*
  * AutoResxTranslator
  * by Salar Khalilzadeh
- * 
+ *
  * https://github.com/salarcode/AutoResxTranslator/
  * Mozilla Public License v2
  */
@@ -113,7 +114,14 @@ namespace AutoResxTranslator
 			}
 		}
 
-		void FillComboBoxes()
+        private string GetLanguageName(string destLng)
+        {
+            return _languages.TryGetValue(destLng, out var name)
+                ? name
+                : "Unknown";
+        }
+
+        void FillComboBoxes()
 		{
 			cmbSrc.DisplayMember = "Value";
 			cmbSrc.ValueMember = "Key";
@@ -158,8 +166,12 @@ namespace AutoResxTranslator
 			else
 			{
 				tabMain.Enabled = !isbusy;
+                lstResxLanguages.Enabled = !isbusy;
+
+                tabMain.Update();
+				lstResxLanguages.Update();
 			}
-		}
+        }
 
 
 		string ReadLanguageName(string fileName)
@@ -278,7 +290,7 @@ namespace AutoResxTranslator
 				null);
 		}
 
-		private delegate void ResxProgressCallback(int max, int pos, string status);
+		private delegate void ResxProgressCallback(int overallMax,int overallPos, int max, int pos, string status);
 
 		async void TranslateResxFilesAsync(
 			string sourceResx,
@@ -301,9 +313,10 @@ namespace AutoResxTranslator
 			var errorLogFilename = sourceResxFilename + ".errors.log";
 			var errorLogFile = Path.Combine(destDir, errorLogFilename);
 
+            var overallPos = 0;
 			foreach (var destLng in desLanguages)
-			{
-				var destFile = Path.Combine(destDir, sourceResxFilename + "." + destLng + ".resx");
+            {
+                var destFile = Path.Combine(destDir, sourceResxFilename + "." + destLng + ".resx");
 				var doc = new XmlDocument();
 				doc.Load(sourceResx);
 				var dataList = ResxTranslator.ReadResxData(doc);
@@ -326,17 +339,17 @@ namespace AutoResxTranslator
 				}
 
 				pos = 0;
-				status = "Translating language: " + destLng;
-				progress.BeginInvoke(max, pos, status, null, null);
+                status = "Translating language: " + destLng;
+				progress.BeginInvoke(desLanguages.Count, overallPos, max, pos, status, null, null);
 
 				try
 				{
 					int destIndexCorrection = 0;
 					foreach (var (node, index) in dataList.Select((n, i) => (n, i)))
 					{
-						status = "Translating language: " + destLng;
-						pos += 1;
-						progress.BeginInvoke(max, pos, status, null, null);
+                        status = $"Translating language: {destLng} ({GetLanguageName(destLng)})";
+                        pos += 1;
+						progress.BeginInvoke(desLanguages.Count, overallPos, max, pos, status, null, null);
 						var valueNode = ResxTranslator.GetDataValueNode(node);
 						if (valueNode == null)
 							continue;
@@ -375,8 +388,11 @@ namespace AutoResxTranslator
 							trycount = 0;
 							do
 							{
+                                status = $"Translating language: {destLng}, key '{keyNode}' - '{orgText}'";
+                                progress.BeginInvoke(desLanguages.Count, overallPos, max, pos, status, null, null);
+
 								try
-								{
+                                {
 									success = GTranslateService.Translate(orgText, sourceLng, destLng, textTranslatorUrlKey, out translated);
 								}
 								catch (Exception)
@@ -388,7 +404,7 @@ namespace AutoResxTranslator
 								if (!success)
 								{
 									status = "Translating language: " + destLng + " , key '" + keyNode + "' failed to translate in try " + trycount;
-									progress.BeginInvoke(max, pos, status, null, null);
+									progress.BeginInvoke(desLanguages.Count, overallPos, max, pos, status, null, null);
 								}
 
 							} while (success == false && trycount <= 2);
@@ -477,9 +493,11 @@ namespace AutoResxTranslator
 						File.AppendAllLines(csvFile, csvOutputDataBuffer, Encoding.UTF8);
 					}
 				}
-			}
 
-			if (hasErrors)
+                ++overallPos;
+            }
+
+            if (hasErrors)
 			{
 				status = "Translation finished. Errors are logged in to '" + errorLogFilename + "'.";
 			}
@@ -488,24 +506,27 @@ namespace AutoResxTranslator
 				status = "Translation finished.";
 			}
 
-
-			progress.BeginInvoke(max, pos, status, null, null);
-
+			progress.BeginInvoke(desLanguages.Count, overallPos, max, pos, status, null, null);
 		}
 
-		void ResxWorkingProgress(int max, int pos, string status)
+        void ResxWorkingProgress(int overallMax, int overallPos, int max, int pos, string status)
 		{
 			if (this.InvokeRequired)
 			{
-				this.BeginInvoke(new ResxProgressCallback(ResxWorkingProgress), max, pos, status);
+				this.BeginInvoke(new ResxProgressCallback(ResxWorkingProgress), overallMax, overallPos, max, pos, status);
 				return;
 			}
 			else
-			{
-				barResxProgress.Minimum = 0;
+            {
+                barResxOverallProgress.Minimum = 0;
+                barResxOverallProgress.Maximum = overallMax;
+                barResxOverallProgress.Value = overallPos;
+
+                barResxProgress.Minimum = 0;
 				barResxProgress.Maximum = max;
 				barResxProgress.Value = pos;
-				lblResxTranslateStatus.Text = $"Processing {max:00}/{pos:00}, " + status;
+				lblResxTranslateStatus.Text = $"[{Math.Min(overallPos+1,overallMax)}:{overallMax}] Processing {max:00}/{pos:00}, {status}";
+				lblResxTranslateStatus.Update();
 			}
 		}
 
@@ -694,23 +715,8 @@ namespace AutoResxTranslator
 					txtCSVOutputDir.Text = Path.GetDirectoryName(txtSourceResx.Text);
 				}
 
-				// reset selection
-				foreach (int i in lstResxLanguages.CheckedIndices)
-					lstResxLanguages.Items[i].Checked = false;
-
-				// select based on what is in destination
-				string[] languageFilesInDir = Directory.GetFiles(Path.GetDirectoryName(txtSourceResx.Text), "*.resx");
-
-				foreach (var lngFile in languageFilesInDir)
-				{
-					var languageTag = ReadLanguageName(lngFile);
-					if (languageTag != "")
-					{
-						var haskey = _languages.FirstOrDefault(x => x.Key.Equals(languageTag, StringComparison.InvariantCultureIgnoreCase));
-
-						lstResxLanguages.Items[lstResxLanguages.Items.IndexOfKey(haskey.Key)].Checked = true;
-					}
-				}
+                // select based on what is in destination
+				btnSelectLanguagesRelevant.PerformClick();
 
 				var lng = ReadLanguageName(txtSourceResx.Text);
 				var key = _languages.FirstOrDefault(x => string.Compare(x.Key, lng, StringComparison.InvariantCultureIgnoreCase) == 0);
@@ -917,7 +923,40 @@ namespace AutoResxTranslator
                 Properties.Settings.Default.Save();
 				_translateSettingsChanged = false;
 			}
-			_translateSettingsChanged = s.SelectedTab.Name == "tabTranslateServices";
+			_translateSettingsChanged = s.SelectedTab == tabTranslateService;
 		}
-	}
+
+        private void btnSelectLanguagesAll_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lstResxLanguages.Items)
+                item.Checked = true;
+        }
+
+        private void btnSelectLanguagesNone_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lstResxLanguages.Items)
+                item.Checked = false;
+        }
+
+        private void btnSelectLanguagesRelevant_Click(object sender, EventArgs e)
+        {
+            btnSelectLanguagesNone.PerformClick();
+
+            // select based on what is in destination
+            string[] languageFilesInDir = Directory.GetFiles(Path.GetDirectoryName(txtSourceResx.Text), "*.resx");
+
+            foreach (var lngFile in languageFilesInDir)
+            {
+                var languageTag = ReadLanguageName(lngFile);
+                if (languageTag != "")
+                {
+                    var hasKey = _languages.FirstOrDefault(x => x.Key.Equals(languageTag, StringComparison.InvariantCultureIgnoreCase));
+
+                    var listIndex = lstResxLanguages.Items.IndexOfKey(hasKey.Key);
+					if (listIndex >= 0)
+                        lstResxLanguages.Items[listIndex].Checked = true;
+                }
+            }
+        }
+    }
 }

@@ -32,7 +32,7 @@
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Language2");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.tabMain = new System.Windows.Forms.TabControl();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabTextTranslator = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.txtSrc = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -45,6 +45,9 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.tabResx = new System.Windows.Forms.TabPage();
+            this.btnSelectLanguagesRelevant = new System.Windows.Forms.Button();
+            this.btnSelectLanguagesNone = new System.Windows.Forms.Button();
+            this.btnSelectLanguagesAll = new System.Windows.Forms.Button();
             this.chkCSVOutput = new System.Windows.Forms.CheckBox();
             this.btnSelectCSVOutputDir = new System.Windows.Forms.Button();
             this.txtCSVOutputDir = new System.Windows.Forms.TextBox();
@@ -63,7 +66,7 @@
             this.cmbSourceResxLng = new System.Windows.Forms.ComboBox();
             this.txtSourceResx = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabExcelImport = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkExcelCreateAbsent = new System.Windows.Forms.CheckBox();
             this.btnSelectExcel = new System.Windows.Forms.Button();
@@ -82,7 +85,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tabBrowser = new System.Windows.Forms.TabPage();
             this.webBrowser = new System.Windows.Forms.WebBrowser();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabTranslateService = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cmbDeeplApiType = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
@@ -96,8 +99,9 @@
             this.rbtnGoogleTranslateService = new System.Windows.Forms.RadioButton();
             this.rbtnMsTranslateService = new System.Windows.Forms.RadioButton();
             this.lnkAbout = new System.Windows.Forms.LinkLabel();
+            this.barResxOverallProgress = new System.Windows.Forms.ProgressBar();
             this.tabMain.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tabTextTranslator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -105,10 +109,10 @@
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabResx.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabExcelImport.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabBrowser.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.tabTranslateService.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -117,11 +121,11 @@
             this.tabMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabMain.Controls.Add(this.tabPage2);
+            this.tabMain.Controls.Add(this.tabTextTranslator);
             this.tabMain.Controls.Add(this.tabResx);
-            this.tabMain.Controls.Add(this.tabPage1);
+            this.tabMain.Controls.Add(this.tabExcelImport);
             this.tabMain.Controls.Add(this.tabBrowser);
-            this.tabMain.Controls.Add(this.tabPage3);
+            this.tabMain.Controls.Add(this.tabTranslateService);
             this.tabMain.Location = new System.Drawing.Point(12, 12);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
@@ -129,16 +133,16 @@
             this.tabMain.TabIndex = 0;
             this.tabMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabMain_Selected);
             // 
-            // tabPage2
+            // tabTextTranslator
             // 
-            this.tabPage2.Controls.Add(this.splitContainer1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(672, 368);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Text Translator";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabTextTranslator.Controls.Add(this.splitContainer1);
+            this.tabTextTranslator.Location = new System.Drawing.Point(4, 22);
+            this.tabTextTranslator.Name = "tabTextTranslator";
+            this.tabTextTranslator.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTextTranslator.Size = new System.Drawing.Size(672, 368);
+            this.tabTextTranslator.TabIndex = 1;
+            this.tabTextTranslator.Text = "Text Translator";
+            this.tabTextTranslator.UseVisualStyleBackColor = true;
             // 
             // splitContainer1
             // 
@@ -264,6 +268,10 @@
             // 
             // tabResx
             // 
+            this.tabResx.Controls.Add(this.barResxOverallProgress);
+            this.tabResx.Controls.Add(this.btnSelectLanguagesRelevant);
+            this.tabResx.Controls.Add(this.btnSelectLanguagesNone);
+            this.tabResx.Controls.Add(this.btnSelectLanguagesAll);
             this.tabResx.Controls.Add(this.chkCSVOutput);
             this.tabResx.Controls.Add(this.btnSelectCSVOutputDir);
             this.tabResx.Controls.Add(this.txtCSVOutputDir);
@@ -289,6 +297,39 @@
             this.tabResx.TabIndex = 2;
             this.tabResx.Text = "ResX Translator";
             this.tabResx.UseVisualStyleBackColor = true;
+            // 
+            // btnSelectLanguagesRelevant
+            // 
+            this.btnSelectLanguagesRelevant.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelectLanguagesRelevant.Location = new System.Drawing.Point(572, 156);
+            this.btnSelectLanguagesRelevant.Name = "btnSelectLanguagesRelevant";
+            this.btnSelectLanguagesRelevant.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectLanguagesRelevant.TabIndex = 21;
+            this.btnSelectLanguagesRelevant.Text = "&Relevant";
+            this.btnSelectLanguagesRelevant.UseVisualStyleBackColor = true;
+            this.btnSelectLanguagesRelevant.Click += new System.EventHandler(this.btnSelectLanguagesRelevant_Click);
+            // 
+            // btnSelectLanguagesNone
+            // 
+            this.btnSelectLanguagesNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelectLanguagesNone.Location = new System.Drawing.Point(574, 127);
+            this.btnSelectLanguagesNone.Name = "btnSelectLanguagesNone";
+            this.btnSelectLanguagesNone.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectLanguagesNone.TabIndex = 20;
+            this.btnSelectLanguagesNone.Text = "&None";
+            this.btnSelectLanguagesNone.UseVisualStyleBackColor = true;
+            this.btnSelectLanguagesNone.Click += new System.EventHandler(this.btnSelectLanguagesNone_Click);
+            // 
+            // btnSelectLanguagesAll
+            // 
+            this.btnSelectLanguagesAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelectLanguagesAll.Location = new System.Drawing.Point(574, 98);
+            this.btnSelectLanguagesAll.Name = "btnSelectLanguagesAll";
+            this.btnSelectLanguagesAll.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectLanguagesAll.TabIndex = 19;
+            this.btnSelectLanguagesAll.Text = "&All";
+            this.btnSelectLanguagesAll.UseVisualStyleBackColor = true;
+            this.btnSelectLanguagesAll.Click += new System.EventHandler(this.btnSelectLanguagesAll_Click);
             // 
             // chkCSVOutput
             // 
@@ -388,7 +429,7 @@
             // btnStartResxTranslate
             // 
             this.btnStartResxTranslate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStartResxTranslate.Location = new System.Drawing.Point(574, 306);
+            this.btnStartResxTranslate.Location = new System.Drawing.Point(574, 299);
             this.btnStartResxTranslate.Name = "btnStartResxTranslate";
             this.btnStartResxTranslate.Size = new System.Drawing.Size(75, 23);
             this.btnStartResxTranslate.TabIndex = 10;
@@ -400,9 +441,9 @@
             // 
             this.barResxProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.barResxProgress.Location = new System.Drawing.Point(113, 306);
+            this.barResxProgress.Location = new System.Drawing.Point(113, 299);
             this.barResxProgress.Name = "barResxProgress";
-            this.barResxProgress.Size = new System.Drawing.Size(454, 23);
+            this.barResxProgress.Size = new System.Drawing.Size(454, 14);
             this.barResxProgress.TabIndex = 9;
             // 
             // label6
@@ -484,19 +525,19 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "Source Resx File:";
             // 
-            // tabPage1
+            // tabExcelImport
             // 
-            this.tabPage1.Controls.Add(this.groupBox1);
-            this.tabPage1.Controls.Add(this.btnExcelResx);
-            this.tabPage1.Controls.Add(this.txtExcelResx);
-            this.tabPage1.Controls.Add(this.label7);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(672, 368);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "Excel Import";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabExcelImport.Controls.Add(this.groupBox1);
+            this.tabExcelImport.Controls.Add(this.btnExcelResx);
+            this.tabExcelImport.Controls.Add(this.txtExcelResx);
+            this.tabExcelImport.Controls.Add(this.label7);
+            this.tabExcelImport.Location = new System.Drawing.Point(4, 22);
+            this.tabExcelImport.Name = "tabExcelImport";
+            this.tabExcelImport.Padding = new System.Windows.Forms.Padding(3);
+            this.tabExcelImport.Size = new System.Drawing.Size(672, 368);
+            this.tabExcelImport.TabIndex = 3;
+            this.tabExcelImport.Text = "Excel Import";
+            this.tabExcelImport.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -689,16 +730,16 @@
             this.webBrowser.Url = new System.Uri("https://translate.google.com/", System.UriKind.Absolute);
             this.webBrowser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser_DocumentCompleted);
             // 
-            // tabPage3
+            // tabTranslateService
             // 
-            this.tabPage3.Controls.Add(this.groupBox2);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabTranslateServices";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(672, 368);
-            this.tabPage3.TabIndex = 5;
-            this.tabPage3.Text = "Translate Service";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabTranslateService.Controls.Add(this.groupBox2);
+            this.tabTranslateService.Location = new System.Drawing.Point(4, 22);
+            this.tabTranslateService.Name = "tabTranslateService";
+            this.tabTranslateService.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTranslateService.Size = new System.Drawing.Size(672, 368);
+            this.tabTranslateService.TabIndex = 5;
+            this.tabTranslateService.Text = "Translate Service";
+            this.tabTranslateService.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -839,6 +880,15 @@
             this.lnkAbout.Text = "About";
             this.lnkAbout.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAbout_LinkClicked);
             // 
+            // barResxOverallProgress
+            // 
+            this.barResxOverallProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.barResxOverallProgress.Location = new System.Drawing.Point(113, 319);
+            this.barResxOverallProgress.Name = "barResxOverallProgress";
+            this.barResxOverallProgress.Size = new System.Drawing.Size(454, 14);
+            this.barResxOverallProgress.TabIndex = 22;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -854,7 +904,7 @@
             this.Text = "Auto Resource Translator";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.tabMain.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
+            this.tabTextTranslator.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -867,12 +917,12 @@
             this.panel2.PerformLayout();
             this.tabResx.ResumeLayout(false);
             this.tabResx.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.tabExcelImport.ResumeLayout(false);
+            this.tabExcelImport.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabBrowser.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
+            this.tabTranslateService.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -883,7 +933,7 @@
 		#endregion
 
 		private System.Windows.Forms.TabControl tabMain;
-		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.TabPage tabTextTranslator;
 		public System.Windows.Forms.SplitContainer splitContainer1;
 		private System.Windows.Forms.TextBox txtSrc;
 		private System.Windows.Forms.Panel panel1;
@@ -909,7 +959,7 @@
 		private System.Windows.Forms.ProgressBar barResxProgress;
 		private System.Windows.Forms.ListView lstResxLanguages;
 		private System.Windows.Forms.LinkLabel lnkAbout;
-		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabExcelImport;
 		private System.Windows.Forms.Button btnExcelResx;
 		private System.Windows.Forms.TextBox txtExcelResx;
 		private System.Windows.Forms.Label label7;
@@ -928,7 +978,7 @@
 		private System.Windows.Forms.CheckBox chkExcelCreateAbsent;
 		private System.Windows.Forms.TabPage tabBrowser;
 		private System.Windows.Forms.WebBrowser webBrowser;
-		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.TabPage tabTranslateService;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton rbtnGoogleTranslateService;
 		private System.Windows.Forms.RadioButton rbtnMsTranslateService;
@@ -947,6 +997,10 @@
         private System.Windows.Forms.TextBox txtDeepLTranslationKey;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.RadioButton rbtnDeepLTranslateService;
+        private System.Windows.Forms.Button btnSelectLanguagesAll;
+        private System.Windows.Forms.Button btnSelectLanguagesNone;
+        private System.Windows.Forms.Button btnSelectLanguagesRelevant;
+        private System.Windows.Forms.ProgressBar barResxOverallProgress;
     }
 }
 
