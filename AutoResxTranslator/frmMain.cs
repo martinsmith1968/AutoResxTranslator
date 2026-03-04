@@ -347,7 +347,9 @@ namespace AutoResxTranslator
 						if (destTranslateOnlyNewKeys)
 						{
 							int destIndex = index - destIndexCorrection;
-							var destNode = ResxTranslator.GetDataKeyName(destinationDataList.ElementAt(destIndex));
+                            var destNode = destIndex < destinationDataList.Count
+                                ? ResxTranslator.GetDataKeyName(destinationDataList.ElementAt(destIndex))
+                                : string.Empty;
 							if (destNode == keyNode)
 							{
 								valueNode.InnerText = ResxTranslator.GetDataValueNode(destinationDataList.ElementAt(destIndex)).InnerText;
