@@ -55,6 +55,7 @@
     <Compile Include="DeepLTranslateService.cs" />
     <Compile Include="Definitions\ResultHolder.cs" />
     <Compile Include="Definitions\TranslationOptions.cs" />
+    <Compile Include="Extensions\ParseExtensions.cs" />
     <Compile Include="frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>

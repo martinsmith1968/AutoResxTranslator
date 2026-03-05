@@ -620,7 +620,7 @@ namespace AutoResxTranslator
 			txtDeepLTranslationKey.Text = Properties.Settings.Default.DeepLTranslatorKey;
 			cmbDeeplApiType.SelectedIndex = Properties.Settings.Default.DeepLTranslatorType;
 			tabMain.TabPages.Remove(tabBrowser);
-            if (ParseSize(Properties.Settings.Default.MainForm_Size, out var formSize))
+            if (Properties.Settings.Default.MainForm_Size.ParseSize(out var formSize))
                 Size = formSize;
         }
 
