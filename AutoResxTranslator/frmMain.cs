@@ -25,9 +25,28 @@ namespace AutoResxTranslator
 		public frmMain()
 		{
 			InitializeComponent();
-		}
 
-		private readonly Dictionary<string, string> _languages =
+			Application.Idle += ApplicationOnIdle;
+        }
+
+        private void ApplicationOnIdle(object sender, EventArgs args)
+        {
+            btnSelectLanguagesAll.Enabled = lstResxLanguages.Items.Count > 0 && lstResxLanguages.CheckedItems.Count < lstResxLanguages.Items.Count;
+            btnSelectLanguagesNone.Enabled = lstResxLanguages.Items.Count > 0 && lstResxLanguages.CheckedItems.Count > 0;
+            btnSelectLanguagesRelevant.Enabled = lstResxLanguages.Items.Count > 0;
+        }
+
+        private void UpgradeSettings()
+        {
+            if (Properties.Settings.Default.AppIsUpgraded)
+            {
+				Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.AppIsUpgraded = false;
+				Properties.Settings.Default.Save();
+            }
+        }
+
+        private readonly Dictionary<string, string> _languages =
 			new Dictionary<string, string>
 			{
 				{"auto", "(Detect)"},
@@ -594,7 +613,8 @@ namespace AutoResxTranslator
 
 		private void frmMain_Load(object sender, EventArgs e)
 		{
-			FillComboBoxes();
+			UpgradeSettings();
+            FillComboBoxes();
 			txtMsTranslationKey.Text = Properties.Settings.Default.MicrosoftTranslatorKey;
 			txtMsTranslationRegion.Text = Properties.Settings.Default.MicrosoftTranslatorRegion;
 			txtDeepLTranslationKey.Text = Properties.Settings.Default.DeepLTranslatorKey;

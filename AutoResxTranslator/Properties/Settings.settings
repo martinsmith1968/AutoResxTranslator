@@ -17,5 +17,8 @@
     <Setting Name="MainForm_Size" Type="System.String" Scope="User">
       <Value Profile="(Default)">720, 457</Value>
     </Setting>
+    <Setting Name="AppIsUpgraded" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

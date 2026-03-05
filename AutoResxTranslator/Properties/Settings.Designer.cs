@@ -82,5 +82,17 @@ namespace AutoResxTranslator.Properties {
                 this["MainForm_Size"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AppIsUpgraded {
+            get {
+                return ((bool)(this["AppIsUpgraded"]));
+            }
+            set {
+                this["AppIsUpgraded"] = value;
+            }
+        }
     }
 }
