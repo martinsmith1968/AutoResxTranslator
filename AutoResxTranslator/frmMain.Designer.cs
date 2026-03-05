@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Language1");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Language2");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
@@ -45,6 +46,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.tabResx = new System.Windows.Forms.TabPage();
+            this.barResxOverallProgress = new System.Windows.Forms.ProgressBar();
             this.btnSelectLanguagesRelevant = new System.Windows.Forms.Button();
             this.btnSelectLanguagesNone = new System.Windows.Forms.Button();
             this.btnSelectLanguagesAll = new System.Windows.Forms.Button();
@@ -99,7 +101,10 @@
             this.rbtnGoogleTranslateService = new System.Windows.Forms.RadioButton();
             this.rbtnMsTranslateService = new System.Windows.Forms.RadioButton();
             this.lnkAbout = new System.Windows.Forms.LinkLabel();
-            this.barResxOverallProgress = new System.Windows.Forms.ProgressBar();
+            this.stsContainer = new System.Windows.Forms.StatusStrip();
+            this.tslblInfoStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tslblActionStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tmrResetInfoStatus = new System.Windows.Forms.Timer(this.components);
             this.tabMain.SuspendLayout();
             this.tabTextTranslator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -114,6 +119,7 @@
             this.tabBrowser.SuspendLayout();
             this.tabTranslateService.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.stsContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabMain
@@ -129,7 +135,7 @@
             this.tabMain.Location = new System.Drawing.Point(12, 12);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(680, 394);
+            this.tabMain.Size = new System.Drawing.Size(680, 383);
             this.tabMain.TabIndex = 0;
             this.tabMain.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabMain_Selected);
             // 
@@ -139,7 +145,7 @@
             this.tabTextTranslator.Location = new System.Drawing.Point(4, 22);
             this.tabTextTranslator.Name = "tabTextTranslator";
             this.tabTextTranslator.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTextTranslator.Size = new System.Drawing.Size(672, 368);
+            this.tabTextTranslator.Size = new System.Drawing.Size(672, 357);
             this.tabTextTranslator.TabIndex = 1;
             this.tabTextTranslator.Text = "Text Translator";
             this.tabTextTranslator.UseVisualStyleBackColor = true;
@@ -160,8 +166,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.txtDesc);
             this.splitContainer1.Panel2.Controls.Add(this.panel2);
-            this.splitContainer1.Size = new System.Drawing.Size(666, 362);
-            this.splitContainer1.SplitterDistance = 166;
+            this.splitContainer1.Size = new System.Drawing.Size(666, 351);
+            this.splitContainer1.SplitterDistance = 160;
             this.splitContainer1.TabIndex = 0;
             // 
             // txtSrc
@@ -172,7 +178,7 @@
             this.txtSrc.Multiline = true;
             this.txtSrc.Name = "txtSrc";
             this.txtSrc.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtSrc.Size = new System.Drawing.Size(666, 135);
+            this.txtSrc.Size = new System.Drawing.Size(666, 129);
             this.txtSrc.TabIndex = 1;
             this.txtSrc.Text = "Bienvenue.";
             // 
@@ -245,7 +251,7 @@
             this.txtDesc.Multiline = true;
             this.txtDesc.Name = "txtDesc";
             this.txtDesc.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtDesc.Size = new System.Drawing.Size(666, 171);
+            this.txtDesc.Size = new System.Drawing.Size(666, 166);
             this.txtDesc.TabIndex = 2;
             // 
             // panel2
@@ -298,10 +304,19 @@
             this.tabResx.Text = "ResX Translator";
             this.tabResx.UseVisualStyleBackColor = true;
             // 
+            // barResxOverallProgress
+            // 
+            this.barResxOverallProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.barResxOverallProgress.Location = new System.Drawing.Point(113, 319);
+            this.barResxOverallProgress.Name = "barResxOverallProgress";
+            this.barResxOverallProgress.Size = new System.Drawing.Size(454, 14);
+            this.barResxOverallProgress.TabIndex = 22;
+            // 
             // btnSelectLanguagesRelevant
             // 
             this.btnSelectLanguagesRelevant.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSelectLanguagesRelevant.Location = new System.Drawing.Point(572, 156);
+            this.btnSelectLanguagesRelevant.Location = new System.Drawing.Point(574, 156);
             this.btnSelectLanguagesRelevant.Name = "btnSelectLanguagesRelevant";
             this.btnSelectLanguagesRelevant.Size = new System.Drawing.Size(75, 23);
             this.btnSelectLanguagesRelevant.TabIndex = 21;
@@ -335,7 +350,7 @@
             // 
             this.chkCSVOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkCSVOutput.AutoSize = true;
-            this.chkCSVOutput.Location = new System.Drawing.Point(454, 75);
+            this.chkCSVOutput.Location = new System.Drawing.Point(454, 73);
             this.chkCSVOutput.Name = "chkCSVOutput";
             this.chkCSVOutput.Size = new System.Drawing.Size(113, 17);
             this.chkCSVOutput.TabIndex = 18;
@@ -347,7 +362,7 @@
             // 
             this.btnSelectCSVOutputDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSelectCSVOutputDir.Enabled = false;
-            this.btnSelectCSVOutputDir.Location = new System.Drawing.Point(572, 69);
+            this.btnSelectCSVOutputDir.Location = new System.Drawing.Point(573, 69);
             this.btnSelectCSVOutputDir.Name = "btnSelectCSVOutputDir";
             this.btnSelectCSVOutputDir.Size = new System.Drawing.Size(75, 23);
             this.btnSelectCSVOutputDir.TabIndex = 17;
@@ -433,7 +448,7 @@
             this.btnStartResxTranslate.Name = "btnStartResxTranslate";
             this.btnStartResxTranslate.Size = new System.Drawing.Size(75, 23);
             this.btnStartResxTranslate.TabIndex = 10;
-            this.btnStartResxTranslate.Text = "Translate";
+            this.btnStartResxTranslate.Text = "&Translate";
             this.btnStartResxTranslate.UseVisualStyleBackColor = true;
             this.btnStartResxTranslate.Click += new System.EventHandler(this.btnStartResxTranslate_Click);
             // 
@@ -541,6 +556,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.chkExcelCreateAbsent);
             this.groupBox1.Controls.Add(this.btnSelectExcel);
             this.groupBox1.Controls.Add(this.btnOpenExcel);
@@ -555,7 +572,7 @@
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Location = new System.Drawing.Point(6, 44);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(630, 153);
+            this.groupBox1.Size = new System.Drawing.Size(660, 153);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Import";
@@ -565,7 +582,7 @@
             this.chkExcelCreateAbsent.AutoSize = true;
             this.chkExcelCreateAbsent.Checked = true;
             this.chkExcelCreateAbsent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkExcelCreateAbsent.Location = new System.Drawing.Point(107, 128);
+            this.chkExcelCreateAbsent.Location = new System.Drawing.Point(119, 128);
             this.chkExcelCreateAbsent.Name = "chkExcelCreateAbsent";
             this.chkExcelCreateAbsent.Size = new System.Drawing.Size(167, 17);
             this.chkExcelCreateAbsent.TabIndex = 9;
@@ -575,7 +592,7 @@
             // btnSelectExcel
             // 
             this.btnSelectExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSelectExcel.Location = new System.Drawing.Point(537, 18);
+            this.btnSelectExcel.Location = new System.Drawing.Point(567, 18);
             this.btnSelectExcel.Name = "btnSelectExcel";
             this.btnSelectExcel.Size = new System.Drawing.Size(75, 23);
             this.btnSelectExcel.TabIndex = 3;
@@ -585,7 +602,8 @@
             // 
             // btnOpenExcel
             // 
-            this.btnOpenExcel.Location = new System.Drawing.Point(263, 46);
+            this.btnOpenExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOpenExcel.Location = new System.Drawing.Point(486, 45);
             this.btnOpenExcel.Name = "btnOpenExcel";
             this.btnOpenExcel.Size = new System.Drawing.Size(75, 23);
             this.btnOpenExcel.TabIndex = 1;
@@ -597,15 +615,15 @@
             // 
             this.txtExcelFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtExcelFile.Location = new System.Drawing.Point(107, 20);
+            this.txtExcelFile.Location = new System.Drawing.Point(119, 20);
             this.txtExcelFile.Name = "txtExcelFile";
-            this.txtExcelFile.Size = new System.Drawing.Size(424, 21);
+            this.txtExcelFile.Size = new System.Drawing.Size(442, 21);
             this.txtExcelFile.TabIndex = 2;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(46, 23);
+            this.label8.Location = new System.Drawing.Point(58, 23);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(55, 13);
             this.label8.TabIndex = 8;
@@ -613,8 +631,9 @@
             // 
             // btnImportExcel
             // 
+            this.btnImportExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportExcel.Enabled = false;
-            this.btnImportExcel.Location = new System.Drawing.Point(263, 100);
+            this.btnImportExcel.Location = new System.Drawing.Point(486, 99);
             this.btnImportExcel.Name = "btnImportExcel";
             this.btnImportExcel.Size = new System.Drawing.Size(75, 23);
             this.btnImportExcel.TabIndex = 4;
@@ -624,17 +643,19 @@
             // 
             // cmbExcelTranslation
             // 
+            this.cmbExcelTranslation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbExcelTranslation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbExcelTranslation.FormattingEnabled = true;
-            this.cmbExcelTranslation.Location = new System.Drawing.Point(107, 101);
+            this.cmbExcelTranslation.Location = new System.Drawing.Point(119, 101);
             this.cmbExcelTranslation.Name = "cmbExcelTranslation";
-            this.cmbExcelTranslation.Size = new System.Drawing.Size(150, 21);
+            this.cmbExcelTranslation.Size = new System.Drawing.Size(361, 21);
             this.cmbExcelTranslation.TabIndex = 3;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(-1, 104);
+            this.label10.Location = new System.Drawing.Point(11, 104);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(102, 13);
             this.label10.TabIndex = 8;
@@ -642,18 +663,20 @@
             // 
             // cmbExcelSheets
             // 
+            this.cmbExcelSheets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbExcelSheets.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbExcelSheets.FormattingEnabled = true;
-            this.cmbExcelSheets.Location = new System.Drawing.Point(107, 47);
+            this.cmbExcelSheets.Location = new System.Drawing.Point(119, 47);
             this.cmbExcelSheets.Name = "cmbExcelSheets";
-            this.cmbExcelSheets.Size = new System.Drawing.Size(150, 21);
+            this.cmbExcelSheets.Size = new System.Drawing.Size(361, 21);
             this.cmbExcelSheets.TabIndex = 0;
             this.cmbExcelSheets.SelectedIndexChanged += new System.EventHandler(this.cmbExcelSheets_SelectedIndexChanged);
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(34, 50);
+            this.label11.Location = new System.Drawing.Point(44, 50);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(69, 13);
             this.label11.TabIndex = 8;
@@ -661,17 +684,19 @@
             // 
             // cmbExcelKey
             // 
+            this.cmbExcelKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbExcelKey.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbExcelKey.FormattingEnabled = true;
-            this.cmbExcelKey.Location = new System.Drawing.Point(107, 74);
+            this.cmbExcelKey.Location = new System.Drawing.Point(119, 74);
             this.cmbExcelKey.Name = "cmbExcelKey";
-            this.cmbExcelKey.Size = new System.Drawing.Size(150, 21);
+            this.cmbExcelKey.Size = new System.Drawing.Size(361, 21);
             this.cmbExcelKey.TabIndex = 2;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(34, 77);
+            this.label9.Location = new System.Drawing.Point(44, 77);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(67, 13);
             this.label9.TabIndex = 8;
@@ -680,7 +705,7 @@
             // btnExcelResx
             // 
             this.btnExcelResx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExcelResx.Location = new System.Drawing.Point(543, 15);
+            this.btnExcelResx.Location = new System.Drawing.Point(573, 15);
             this.btnExcelResx.Name = "btnExcelResx";
             this.btnExcelResx.Size = new System.Drawing.Size(75, 23);
             this.btnExcelResx.TabIndex = 1;
@@ -692,16 +717,16 @@
             // 
             this.txtExcelResx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtExcelResx.Location = new System.Drawing.Point(113, 17);
+            this.txtExcelResx.Location = new System.Drawing.Point(125, 17);
             this.txtExcelResx.Name = "txtExcelResx";
             this.txtExcelResx.ReadOnly = true;
-            this.txtExcelResx.Size = new System.Drawing.Size(424, 21);
+            this.txtExcelResx.Size = new System.Drawing.Size(442, 21);
             this.txtExcelResx.TabIndex = 0;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(53, 20);
+            this.label7.Location = new System.Drawing.Point(65, 20);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(54, 13);
             this.label7.TabIndex = 4;
@@ -777,7 +802,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(319, 129);
+            this.label15.Location = new System.Drawing.Point(309, 129);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(55, 13);
             this.label15.TabIndex = 9;
@@ -880,20 +905,39 @@
             this.lnkAbout.Text = "About";
             this.lnkAbout.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAbout_LinkClicked);
             // 
-            // barResxOverallProgress
+            // stsContainer
             // 
-            this.barResxOverallProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.barResxOverallProgress.Location = new System.Drawing.Point(113, 319);
-            this.barResxOverallProgress.Name = "barResxOverallProgress";
-            this.barResxOverallProgress.Size = new System.Drawing.Size(454, 14);
-            this.barResxOverallProgress.TabIndex = 22;
+            this.stsContainer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tslblInfoStatus,
+            this.tslblActionStatus});
+            this.stsContainer.Location = new System.Drawing.Point(0, 407);
+            this.stsContainer.Name = "stsContainer";
+            this.stsContainer.Size = new System.Drawing.Size(704, 22);
+            this.stsContainer.TabIndex = 4;
+            // 
+            // tslblInfoStatus
+            // 
+            this.tslblInfoStatus.Name = "tslblInfoStatus";
+            this.tslblInfoStatus.Size = new System.Drawing.Size(689, 17);
+            this.tslblInfoStatus.Spring = true;
+            this.tslblInfoStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tslblActionStatus
+            // 
+            this.tslblActionStatus.Name = "tslblActionStatus";
+            this.tslblActionStatus.Size = new System.Drawing.Size(0, 17);
+            this.tslblActionStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // tmrResetInfoStatus
+            // 
+            this.tmrResetInfoStatus.Tick += new System.EventHandler(this.tmrResetInfoStatus_Tick);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 418);
+            this.ClientSize = new System.Drawing.Size(704, 429);
+            this.Controls.Add(this.stsContainer);
             this.Controls.Add(this.lnkAbout);
             this.Controls.Add(this.tabMain);
             this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
@@ -925,6 +969,8 @@
             this.tabTranslateService.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.stsContainer.ResumeLayout(false);
+            this.stsContainer.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1001,6 +1047,10 @@
         private System.Windows.Forms.Button btnSelectLanguagesNone;
         private System.Windows.Forms.Button btnSelectLanguagesRelevant;
         private System.Windows.Forms.ProgressBar barResxOverallProgress;
+        private System.Windows.Forms.StatusStrip stsContainer;
+        private System.Windows.Forms.ToolStripStatusLabel tslblInfoStatus;
+        private System.Windows.Forms.ToolStripStatusLabel tslblActionStatus;
+        private System.Windows.Forms.Timer tmrResetInfoStatus;
     }
 }
 
