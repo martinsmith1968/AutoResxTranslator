@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using AutoResxTranslator.Definitions;
+using AutoResxTranslator.Extensions;
 
 /*
  * AutoResxTranslator
@@ -175,20 +177,22 @@ namespace AutoResxTranslator
 			}
 		}
 
-		void IsBusy(bool isbusy)
+		void IsBusy(bool isBusy, string actionText = "")
 		{
 			if (this.InvokeRequired)
 			{
-				this.BeginInvoke(new Action<bool>(IsBusy), isbusy);
+				this.BeginInvoke(new Action<bool, string>(IsBusy), isBusy, actionText);
 				return;
 			}
 			else
 			{
-				tabMain.Enabled = !isbusy;
-                lstResxLanguages.Enabled = !isbusy;
+				tabMain.Enabled = !isBusy;
+                lstResxLanguages.Enabled = !isBusy;
 
                 tabMain.Update();
 				lstResxLanguages.Update();
+
+				SetActionStatus(isBusy ? actionText : string.Empty);
 			}
         }
 
@@ -227,8 +231,6 @@ namespace AutoResxTranslator
 				return "res";
 			}
 		}
-
-
 
 		bool ValidateResxTranslate()
 		{
@@ -624,26 +626,44 @@ namespace AutoResxTranslator
                 Size = formSize;
         }
 
-        private static bool ParseSize(string text, out Size size)
+        private void SetInfoStatus(string text, bool isError, int clearAfterSeconds = 5)
         {
-            var parts = (text ?? string.Empty)
-                .Split(',')
-                .Select(x => x.Trim())
-                .ToArray();
-
-			if (parts.Length == 2 && int.TryParse(parts[0], out var width) && int.TryParse(parts[1], out var height))
-			{
-				size = new Size(width, height);
-                return true;
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new Action<string, bool, int>(SetInfoStatus), text, isError, clearAfterSeconds);
+                return;
             }
 
-            size = Size.Empty;
-			return false;
+            tslblInfoStatus.Text = isError ? $"ERROR: {text}" : text;
+            if (!string.IsNullOrWhiteSpace(text))
+                tslblInfoStatus.ToolTipText = tslblInfoStatus.Text;
+            tslblInfoStatus.Font = new Font(tslblInfoStatus.Font, isError ? FontStyle.Bold : FontStyle.Regular);
+            tslblInfoStatus.ForeColor = isError
+                ? Color.Red
+                : Color.FromKnownColor(KnownColor.ActiveCaptionText);
+            stsContainer.Update();
+
+            if (clearAfterSeconds > 0)
+            {
+                tmrResetInfoStatus.Interval = Convert.ToInt32(TimeSpan.FromSeconds(clearAfterSeconds).TotalMilliseconds);
+                tmrResetInfoStatus.Enabled = true;
+            }
+        }
+
+        private void SetActionStatus(string text)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new Action<string>(SetActionStatus), text);
+                return;
+            }
+
+            tslblActionStatus.Text = text;
+			stsContainer.Update();
         }
 
 		private async void btnTranslate_ClickAsync(object sender, EventArgs e)
 		{
-
 			if (cmbDesc.SelectedIndex == -1 || cmbSrc.SelectedIndex == -1)
 			{
 				MessageBox.Show("Please select source and destination languages correctly.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -655,72 +675,79 @@ namespace AutoResxTranslator
 				return;
 			}
 
-			var lngSrc = ((KeyValuePair<string, string>)cmbSrc.SelectedItem).Key;
-			var lngDest = ((KeyValuePair<string, string>)cmbDesc.SelectedItem).Key;
-			var text = txtSrc.Text;
+            try
+            {
+                var lngSrc = ((KeyValuePair<string, string>)cmbSrc.SelectedItem).Key;
+                var lngDest = ((KeyValuePair<string, string>)cmbDesc.SelectedItem).Key;
+                var text = txtSrc.Text;
 
-			var translationOptions = new TranslationOptions
-			{
-				ServiceType = ServiceType,
-				MsSubscriptionKey = txtMsTranslationKey.Text,
-				MsSubscriptionRegion = txtMsTranslationRegion.Text,
-				DeepLSubscriptionKey = txtDeepLTranslationKey.Text,
-				DeepLSubscriptionRegion = cmbDeeplApiType.SelectedIndex.ToString()
-			};
+                var translationOptions = new TranslationOptions
+                {
+                    ServiceType = ServiceType,
+                    MsSubscriptionKey = txtMsTranslationKey.Text,
+                    MsSubscriptionRegion = txtMsTranslationRegion.Text,
+                    DeepLSubscriptionKey = txtDeepLTranslationKey.Text,
+                    DeepLSubscriptionRegion = cmbDeeplApiType.SelectedIndex.ToString()
+                };
 
 
-			IsBusy(true);
+                IsBusy(true, $"Translating via {ServiceType}");
 
-			if (ServiceType == ServiceTypeEnum.Google)
-			{
-				// There is no longer a key to validate
-				var textTranslatorUrlKey = "";
+                if (ServiceType == ServiceTypeEnum.Google)
+                {
+                    // There is no longer a key to validate
+                    var textTranslatorUrlKey = "";
 
-				GTranslateService.TranslateAsync(
-				text, lngSrc, lngDest, textTranslatorUrlKey,
-				(success, result) =>
-				{
-					SetResult(result);
-					IsBusy(false);
-				});
-			}
-			else if (ServiceType == ServiceTypeEnum.Microsoft)
-			{
-				var translationResult = await MsTranslateService.TranslateAsync(text, lngSrc, lngDest, txtMsTranslationKey.Text, txtMsTranslationRegion.Text);
+                    GTranslateService.TranslateAsync(
+                        text, lngSrc, lngDest, textTranslatorUrlKey,
+                        (success, result) =>
+                        {
+                            SetResult(result);
+                            IsBusy(false);
+                        });
+                }
+                else if (ServiceType == ServiceTypeEnum.Microsoft)
+                {
+                    var translationResult = await MsTranslateService.TranslateAsync(text, lngSrc, lngDest, txtMsTranslationKey.Text, txtMsTranslationRegion.Text);
 
-				if (translationResult.Success)
-				{
-					SetResult(translationResult.Result);
-				}
-				else
-				{
-					if (!string.IsNullOrEmpty(translationResult.Result))
-						SetResult(translationResult.Result);
-					else
-						SetResult("Translation Failed!");
-				}
+                    if (translationResult.Success)
+                    {
+                        SetResult(translationResult.Result);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(translationResult.Result))
+                            SetResult(translationResult.Result);
+                        else
+                            SetResult("Translation Failed!");
+                    }
+                }
+                else
+                {
+                    var translationResult = await DeepLTranslateService.TranslateAsync(text, lngSrc, lngDest, txtDeepLTranslationKey.Text, cmbDeeplApiType.SelectedIndex.ToString());
 
+                    if (translationResult.Success)
+                    {
+                        SetResult(translationResult.Result);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(translationResult.Result))
+                            SetResult(translationResult.Result);
+                        else
+                            SetResult("Translation Failed!");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+				SetInfoStatus(ex.Message, true);
+            }
+            finally
+            {
 				IsBusy(false);
-			}
-			else
-			{
-				var translationResult = await DeepLTranslateService.TranslateAsync(text, lngSrc, lngDest, txtDeepLTranslationKey.Text, cmbDeeplApiType.SelectedIndex.ToString());
-
-				if (translationResult.Success)
-				{
-					SetResult(translationResult.Result);
-				}
-				else
-				{
-					if (!string.IsNullOrEmpty(translationResult.Result))
-						SetResult(translationResult.Result);
-					else
-						SetResult("Translation Failed!");
-				}
-
-				IsBusy(false);
-			}
-		}
+            }
+        }
 
 		private void btnSelectResxSource_Click(object sender, EventArgs e)
 		{
@@ -778,8 +805,22 @@ namespace AutoResxTranslator
 				return;
 			}
 
-			TranslateResxFiles();
-		}
+            var stopwatch = Stopwatch.StartNew();
+            try
+            {
+                IsBusy(true, "Translating ResX files");
+                TranslateResxFiles();
+				SetInfoStatus($"Completed in {stopwatch.Elapsed.TotalSeconds} seconds", false);
+            }
+            catch (Exception ex)
+            {
+				SetInfoStatus(ex.Message, true);
+            }
+            finally
+            {
+				IsBusy(false);
+            }
+        }
 
 		private void lnkAbout_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
@@ -797,21 +838,36 @@ namespace AutoResxTranslator
 				return;
 			}
 
-			var excel = ResxExcel.ReadExcel(txtExcelFile.Text);
-			if (excel == null)
-			{
-				MessageBox.Show("Failed to read excel file", "Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-			cmbExcelSheets.DataSource = excel.SheetNames;
-			cmbExcelKey.DataSource = excel.SheetColumnsKey;
-			cmbExcelTranslation.DataSource = excel.SheetColumnsTranslation;
-			if (Array.IndexOf(excel.SheetColumnsKey, "Name") != -1)
-			{
-				cmbExcelKey.SelectedIndex = Array.IndexOf(excel.SheetColumnsKey, "Name");
-			}
-			btnImportExcel.Enabled = true;
-		}
+            try
+            {
+                IsBusy(true, "Reading Excel");
+
+                var excel = ResxExcel.ReadExcel(txtExcelFile.Text);
+			    if (excel == null)
+			    {
+    				MessageBox.Show("Failed to read excel file", "Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				    return;
+			    }
+
+                cmbExcelSheets.DataSource = excel.SheetNames;
+                cmbExcelKey.DataSource = excel.SheetColumnsKey;
+                cmbExcelTranslation.DataSource = excel.SheetColumnsTranslation;
+                if (Array.IndexOf(excel.SheetColumnsKey, "Name") != -1)
+                {
+                    cmbExcelKey.SelectedIndex = Array.IndexOf(excel.SheetColumnsKey, "Name");
+                }
+
+                btnImportExcel.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+				SetInfoStatus(ex.Message, true);
+            }
+            finally
+            {
+				IsBusy(false);
+            }
+        }
 
 		private void btnSelectExcel_Click(object sender, EventArgs e)
 		{
@@ -883,7 +939,19 @@ namespace AutoResxTranslator
 				return;
 			}
 
-			ImportExcel();
+			try
+			{
+				IsBusy(true, "Importing Excel");
+				ImportExcel();
+			}
+			catch (Exception ex)
+			{
+				SetInfoStatus(ex.Message, true);
+			}
+			finally
+			{
+                IsBusy(false);
+			}
 		}
 
 		private void webBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
@@ -960,23 +1028,41 @@ namespace AutoResxTranslator
 
         private void btnSelectLanguagesRelevant_Click(object sender, EventArgs e)
         {
-            btnSelectLanguagesNone.PerformClick();
-
-            // select based on what is in destination
-            string[] languageFilesInDir = Directory.GetFiles(Path.GetDirectoryName(txtSourceResx.Text), "*.resx");
-
-            foreach (var lngFile in languageFilesInDir)
+            try
             {
-                var languageTag = ReadLanguageName(lngFile);
-                if (languageTag != "")
-                {
-                    var hasKey = _languages.FirstOrDefault(x => x.Key.Equals(languageTag, StringComparison.InvariantCultureIgnoreCase));
+                // select based on what is in destination
+                var languageFilesInDir = string.IsNullOrWhiteSpace(txtSourceResx.Text)
+                    ? Array.Empty<string>()
+                    : Directory.GetFiles(Path.GetDirectoryName(txtSourceResx.Text), "*.resx");
 
-                    var listIndex = lstResxLanguages.Items.IndexOfKey(hasKey.Key);
-					if (listIndex >= 0)
-                        lstResxLanguages.Items[listIndex].Checked = true;
+                if (languageFilesInDir.Any())
+                {
+                    btnSelectLanguagesNone.PerformClick();
+
+                    foreach (var lngFile in languageFilesInDir)
+                    {
+                        var languageTag = ReadLanguageName(lngFile);
+                        if (languageTag != "")
+                        {
+                            var hasKey = _languages.FirstOrDefault(x => x.Key.Equals(languageTag, StringComparison.InvariantCultureIgnoreCase));
+
+                            var listIndex = lstResxLanguages.Items.IndexOfKey(hasKey.Key);
+                            if (listIndex >= 0)
+                                lstResxLanguages.Items[listIndex].Checked = true;
+                        }
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+				SetInfoStatus(ex.Message, true);
+            }
+        }
+
+        private void tmrResetInfoStatus_Tick(object sender, EventArgs e)
+        {
+			SetInfoStatus(string.Empty, false, 0);
+            tmrResetInfoStatus.Enabled = false;
         }
     }
 }
